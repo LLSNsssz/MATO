@@ -2,7 +2,6 @@ package com.lshzzz.mato.service.users;
 
 import com.lshzzz.mato.exception.CustomException;
 import com.lshzzz.mato.exception.ErrorCode;
-import com.lshzzz.mato.model.users.Role;
 import com.lshzzz.mato.model.users.Users;
 import com.lshzzz.mato.model.users.dto.UsersLoginResponse;
 import com.lshzzz.mato.model.users.dto.UsersRegisterRequest;

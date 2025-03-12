@@ -78,7 +78,7 @@ public class UsersController {
 
     // 회원 탈퇴 API
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(HttpServletRequest request) {
+    public ResponseEntity<String> deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // 인증 정보가 없는 경우 처리
