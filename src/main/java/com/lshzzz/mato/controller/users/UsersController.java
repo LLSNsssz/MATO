@@ -1,5 +1,7 @@
 package com.lshzzz.mato.controller.users;
 
+import com.lshzzz.mato.exception.CustomException;
+import com.lshzzz.mato.exception.ErrorCode;
 import com.lshzzz.mato.model.users.dto.UsersLoginRequest;
 import com.lshzzz.mato.model.users.dto.UsersLoginResponse;
 import com.lshzzz.mato.model.users.dto.UsersRegisterRequest;
@@ -9,12 +11,14 @@ import com.lshzzz.mato.model.users.dto.UsersUpdateResponse;
 import com.lshzzz.mato.service.users.RefreshTokenService;
 import com.lshzzz.mato.service.users.UsersService;
 import com.lshzzz.mato.utils.users.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,5 +74,24 @@ public class UsersController {
 
         UsersUpdateResponse response = usersService.updateUser(userId, request);
         return ResponseEntity.ok(response);
+    }
+
+    // 회원 탈퇴 API
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 인증 정보가 없는 경우 처리
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        String userId = authentication.getName();
+
+        // 사용자 삭제 및 Refresh Token 삭제
+        usersService.deleteUser(userId);
+        refreshTokenService.deleteRefreshToken(userId);
+
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
     }
 }

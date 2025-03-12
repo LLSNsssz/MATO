@@ -93,4 +93,17 @@ public class UsersService {
 
         return UsersMapper.toUpdateResponse(updatedUser);
     }
+
+    // 회원 탈퇴 로직
+    @Transactional
+    public void deleteUser(String userId) {
+        Users user = usersRepository.findByUserIdAndDeletedAtIsNull(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.getDeletedAt() != null) {
+            throw new CustomException(ErrorCode.USER_ALREADY_DELETED);
+        }
+
+        user.delete();
+    }
 }
