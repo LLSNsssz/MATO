@@ -7,6 +7,8 @@ import com.lshzzz.mato.model.users.Users;
 import com.lshzzz.mato.model.users.dto.UsersLoginResponse;
 import com.lshzzz.mato.model.users.dto.UsersRegisterRequest;
 import com.lshzzz.mato.model.users.dto.UsersRegisterResponse;
+import com.lshzzz.mato.model.users.dto.UsersUpdateRequest;
+import com.lshzzz.mato.model.users.dto.UsersUpdateResponse;
 import com.lshzzz.mato.repository.UsersRepository;
 import com.lshzzz.mato.utils.users.UsersMapper;
 import lombok.RequiredArgsConstructor;
@@ -53,15 +55,42 @@ public class UsersService {
         String encryptedPassword = passwordEncoder.encode(request.password());
 
         // 사용자 저장
-        Users user = Users.builder()
-            .userId(request.userId())
-            .password(encryptedPassword)
-            .nickname(request.nickname())
-            .role(Role.USER)
-            .build();
+        Users user = UsersMapper.toEntity(request, encryptedPassword);
         usersRepository.save(user);
 
-        return new UsersRegisterResponse(user.getId(), user.getUserId(), user.getNickname(),
-            user.getRole());
+        return UsersMapper.toRegisterResponse(user);
+    }
+
+    // 회원 수정 로직
+    @Transactional
+    public UsersUpdateResponse updateUser(String userId, UsersUpdateRequest request) {
+        Users user = usersRepository.findByUserIdAndDeletedAtIsNull(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 닉네임과 새 비밀번호가 모두 null인 경우 예외 처리
+        if (request.nickname() == null && request.newPassword() == null) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST);
+        }
+
+        // 현재 비밀번호 검증
+        if (request.currentPassword() != null && !passwordEncoder.matches(request.currentPassword(),
+            user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        // 닉네임 업데이트
+        if (request.nickname() != null) {
+            user.updateNickname(request.nickname());
+        }
+
+        // 새 비밀번호 업데이트
+        if (request.newPassword() != null) {
+            String encodedPassword = passwordEncoder.encode(request.newPassword());
+            user.updatePassword(encodedPassword);
+        }
+
+        Users updatedUser = usersRepository.save(user);
+
+        return UsersMapper.toUpdateResponse(updatedUser);
     }
 }
