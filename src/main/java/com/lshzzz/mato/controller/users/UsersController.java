@@ -2,6 +2,8 @@ package com.lshzzz.mato.controller.users;
 
 import com.lshzzz.mato.model.users.dto.UsersLoginRequest;
 import com.lshzzz.mato.model.users.dto.UsersLoginResponse;
+import com.lshzzz.mato.model.users.dto.UsersRegisterRequest;
+import com.lshzzz.mato.model.users.dto.UsersRegisterResponse;
 import com.lshzzz.mato.service.users.RefreshTokenService;
 import com.lshzzz.mato.service.users.UsersService;
 import com.lshzzz.mato.utils.users.JwtUtil;
@@ -42,5 +44,14 @@ public class UsersController {
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    // 회원 가입 API
+    @PostMapping("/register")
+    public ResponseEntity<UsersRegisterResponse> register(
+        @Valid @RequestBody UsersRegisterRequest request) {
+        UsersRegisterResponse response = usersService.register(request);
+
+        return ResponseEntity.ok(response);
     }
 }
