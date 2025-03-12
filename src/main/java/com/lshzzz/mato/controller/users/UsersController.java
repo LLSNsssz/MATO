@@ -11,7 +11,6 @@ import com.lshzzz.mato.model.users.dto.UsersUpdateResponse;
 import com.lshzzz.mato.service.users.RefreshTokenService;
 import com.lshzzz.mato.service.users.UsersService;
 import com.lshzzz.mato.utils.users.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
