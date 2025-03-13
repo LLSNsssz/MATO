@@ -37,6 +37,12 @@ public class UsersService {
         return UsersMapper.toLoginResponse(user);
     }
 
+    // 아이디 중복 확인 메서드
+    @Transactional(readOnly = true)
+    public boolean isUserIdAvailable(String userId) {
+        return !usersRepository.existsByUserId(userId);
+    }
+
     // 회원 가입 로직
     @Transactional
     public UsersRegisterResponse register(UsersRegisterRequest request) {
