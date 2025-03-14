@@ -1,7 +1,10 @@
 package com.lshzzz.mato.model.map.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public record MapRequestDto(
-	String name,
+	@NotNull Long userId,
+	@NotNull String name,
 	String description,
-	Boolean isPublic
+	@NotNull Boolean isPublic
 ) {}

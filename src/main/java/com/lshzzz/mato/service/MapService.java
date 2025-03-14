@@ -17,9 +17,9 @@ public class MapService {
 
 	// 맵 생성
 	@Transactional
-	public MapResponseDto createMap(MapRequestDto requestDto, Long userId) {
+	public MapResponseDto createMap(MapRequestDto requestDto) {
 		Map map = Map.builder()
-			.userId(userId)
+			.userId(requestDto.userId())
 			.name(requestDto.name())
 			.description(requestDto.description())
 			.isPublic(requestDto.isPublic())
@@ -46,11 +46,11 @@ public class MapService {
 
 	// 맵 정보 수정
 	@Transactional
-	public MapResponseDto updateMap(Long id, MapRequestDto requestDto, Long userId) {
+	public MapResponseDto updateMap(Long id, MapRequestDto requestDto) {
 		Map map = mapRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 맵이 존재하지 않습니다."));
 
-		if (!map.getUserId().equals(userId)) {
+		if (!map.getUserId().equals(requestDto.userId())) {
 			throw new IllegalArgumentException("맵 수정 권한이 없습니다.");
 		}
 

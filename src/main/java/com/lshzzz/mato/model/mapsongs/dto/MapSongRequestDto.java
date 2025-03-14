@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record MapSongRequestDto(
-	@NotNull Long mapId,      // 맵 ID
 	@NotNull Long songId,     // 노래 ID
 	@Min(0) Integer startTime, // 시작 시점 (초 단위)
 	@Min(1) Integer endTime,   // 종료 시점 (초 단위)
