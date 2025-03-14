@@ -30,7 +30,7 @@ public class Song extends BaseEntity {
 	private String composer; // 작곡가
 
 	@Column(nullable = false)
-	private String audioUrl; // 오디오 파일 URL (유튜브 OR 직접 업로드)
+	private String youtubeUrl; // 오디오 파일 URL (유튜브 OR 직접 업로드)
 
 	// Map과 연결 (양방향 관계)
 	@OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -42,7 +42,7 @@ public class Song extends BaseEntity {
 			.title(title)
 			.artist(artist)
 			.composer(composer)
-			.audioUrl(audioUrl)
+			.youtubeUrl(audioUrl)
 			.build();
 	}
 
@@ -51,6 +51,6 @@ public class Song extends BaseEntity {
 		this.title = title;
 		this.artist = artist;
 		this.composer = composer;
-		this.audioUrl = audioUrl;
+		this.youtubeUrl = audioUrl;
 	}
 }

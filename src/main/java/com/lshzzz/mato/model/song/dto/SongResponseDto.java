@@ -18,7 +18,7 @@ public record SongResponseDto(
 			song.getTitle(),
 			song.getArtist(),
 			song.getComposer(),
-			song.getAudioUrl(),
+			song.getYoutubeUrl(),
 			song.getCreatedAt(),
 			song.getUpdatedAt()
 		);
