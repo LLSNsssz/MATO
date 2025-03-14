@@ -18,9 +18,12 @@ public class MapSongController {
 	private final MapSongService mapSongService;
 
 	// 맵에 노래 추가
-	@PostMapping
-	public ResponseEntity<MapSongResponseDto> addSongToMap(@Valid @RequestBody MapSongRequestDto requestDto) {
-		return ResponseEntity.ok(mapSongService.addSongToMap(requestDto));
+	@PostMapping("/{mapId}/songs")
+	public ResponseEntity<MapSongResponseDto> addSongToMap(
+		@PathVariable Long mapId,
+		@Valid @RequestBody MapSongRequestDto requestDto
+	) {
+		return ResponseEntity.ok(mapSongService.addSongToMap(mapId, requestDto));
 	}
 
 	// 특정 맵의 노래 목록 조회

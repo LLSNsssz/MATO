@@ -25,8 +25,8 @@ public class MapSongService {
 	private final SongRepository songRepository;
 
 	// 맵에 노래 추가
-	public MapSongResponseDto addSongToMap(MapSongRequestDto requestDto) {
-		Map map = mapRepository.findById(requestDto.mapId())
+	public MapSongResponseDto addSongToMap(Long mapId, MapSongRequestDto requestDto) {
+		Map map = mapRepository.findById(mapId)
 			.orElseThrow(() -> new IllegalArgumentException("맵을 찾을 수 없습니다."));
 		Song song = songRepository.findById(requestDto.songId())
 			.orElseThrow(() -> new IllegalArgumentException("노래를 찾을 수 없습니다."));

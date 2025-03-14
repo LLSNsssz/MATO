@@ -15,38 +15,34 @@ import java.util.List;
 public class MapController {
 	private final MapService mapService;
 
-	// 맵 생성
+	// 🔹 맵 생성
 	@PostMapping
-	public ResponseEntity<MapResponseDto> createMap(@RequestBody MapRequestDto requestDto, @RequestParam Long userId) {
-		return ResponseEntity.ok(mapService.createMap(requestDto, userId));
+	public ResponseEntity<MapResponseDto> createMap(@RequestBody MapRequestDto requestDto) {
+		return ResponseEntity.ok(mapService.createMap(requestDto));
 	}
 
-	// 특정 맵 조회
+	// 🔹 특정 맵 조회
 	@GetMapping("/{id}")
 	public ResponseEntity<MapResponseDto> getMap(@PathVariable Long id) {
 		return ResponseEntity.ok(mapService.getMapById(id));
 	}
 
-	// 공개된 맵 목록 조회
+	// 🔹 공개된 맵 목록 조회
 	@GetMapping("/public")
 	public ResponseEntity<List<MapResponseDto>> getPublicMaps() {
 		return ResponseEntity.ok(mapService.getPublicMaps());
 	}
 
-	// 맵 수정
+	// 🔹 맵 수정
 	@PutMapping("/{id}")
-	public ResponseEntity<MapResponseDto> updateMap(
-		@PathVariable Long id,
-		@RequestBody MapRequestDto requestDto,
-		@RequestParam Long userId
-	) {
-		return ResponseEntity.ok(mapService.updateMap(id, requestDto, userId));
+	public ResponseEntity<MapResponseDto> updateMap(@PathVariable Long id, @RequestBody MapRequestDto requestDto) {
+		return ResponseEntity.ok(mapService.updateMap(id, requestDto));
 	}
 
-	// 맵 삭제
+	// 🔹 맵 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteMap(@PathVariable Long id, @RequestParam Long userId) {
-		mapService.deleteMap(id, userId);
+	public ResponseEntity<Void> deleteMap(@PathVariable Long id, @RequestBody MapRequestDto requestDto) {
+		mapService.deleteMap(id, requestDto.userId());
 		return ResponseEntity.noContent().build();
 	}
 }
