@@ -4,7 +4,9 @@ import com.lshzzz.mato.model.song.Song;
 import com.lshzzz.mato.model.song.dto.SongRequestDto;
 import com.lshzzz.mato.model.song.dto.SongResponseDto;
 import com.lshzzz.mato.repository.SongRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +23,13 @@ public class SongService {
 
 	// 노래 등록
 	public SongResponseDto createSong(SongRequestDto requestDto) {
-		Song song = Song.create(
-			requestDto.title(),
-			requestDto.artist(),
-			requestDto.composer(),
-			requestDto.audioUrl()
-		);
+		Song song = Song.builder()
+			.title(requestDto.title())
+			.artist(requestDto.artist())
+			.composer(requestDto.composer())
+			.youtubeUrl(requestDto.youtubeUrl()) // 유튜브 URL 포함 가능
+			.build();
+
 		songRepository.save(song);
 		return new SongResponseDto(song);
 	}
@@ -55,7 +58,7 @@ public class SongService {
 			requestDto.title(),
 			requestDto.artist(),
 			requestDto.composer(),
-			requestDto.audioUrl()
+			requestDto.youtubeUrl()
 		);
 		return new SongResponseDto(song);
 	}
