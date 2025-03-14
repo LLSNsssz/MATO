@@ -1,52 +1,52 @@
 package com.lshzzz.mato.controller;
 
+import com.lshzzz.mato.model.map.dto.MapRequestDto;
+import com.lshzzz.mato.model.map.dto.MapResponseDto;
+import com.lshzzz.mato.service.MapService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.lshzzz.mato.model.Map.dto.MapRequestDto;
-import com.lshzzz.mato.model.Map.dto.MapResponseDto;
-import com.lshzzz.mato.service.MapService;
-
-import lombok.RequiredArgsConstructor;
-
 @RestController
-@RequestMapping("/maps")
+@RequestMapping("/api/maps")
 @RequiredArgsConstructor
 public class MapController {
 	private final MapService mapService;
 
+	// 맵 생성
 	@PostMapping
-	public ResponseEntity<MapResponseDto> createMap(@RequestBody MapRequestDto dto) {
-		return ResponseEntity.ok(mapService.createMap(dto));
+	public ResponseEntity<MapResponseDto> createMap(@RequestBody MapRequestDto requestDto, @RequestParam Long userId) {
+		return ResponseEntity.ok(mapService.createMap(requestDto, userId));
 	}
 
-	@GetMapping
-	public ResponseEntity<List<MapResponseDto>> getAllMaps() {
-		return ResponseEntity.ok(mapService.getAllMaps());
-	}
-
+	// 특정 맵 조회
 	@GetMapping("/{id}")
-	public ResponseEntity<MapResponseDto> getMapById(@PathVariable Long id) {
+	public ResponseEntity<MapResponseDto> getMap(@PathVariable Long id) {
 		return ResponseEntity.ok(mapService.getMapById(id));
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<MapResponseDto> updateMap(@PathVariable Long id, @RequestBody MapRequestDto dto) {
-		return ResponseEntity.ok(mapService.updateMap(id, dto));
+	// 공개된 맵 목록 조회
+	@GetMapping("/public")
+	public ResponseEntity<List<MapResponseDto>> getPublicMaps() {
+		return ResponseEntity.ok(mapService.getPublicMaps());
 	}
 
+	// 맵 수정
+	@PutMapping("/{id}")
+	public ResponseEntity<MapResponseDto> updateMap(
+		@PathVariable Long id,
+		@RequestBody MapRequestDto requestDto,
+		@RequestParam Long userId
+	) {
+		return ResponseEntity.ok(mapService.updateMap(id, requestDto, userId));
+	}
+
+	// 맵 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteMap(@PathVariable Long id) {
-		mapService.deleteMap(id);
+	public ResponseEntity<Void> deleteMap(@PathVariable Long id, @RequestParam Long userId) {
+		mapService.deleteMap(id, userId);
 		return ResponseEntity.noContent().build();
 	}
 }

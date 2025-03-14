@@ -1,4 +1,4 @@
-package com.lshzzz.mato.model.Map.dto;
+package com.lshzzz.mato.model.map.dto;
 
 public record MapRequestDto(
 	String name,

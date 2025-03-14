@@ -1,80 +1,73 @@
 package com.lshzzz.mato.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
-import com.lshzzz.mato.model.Map.Map;
-import com.lshzzz.mato.model.Map.dto.MapRequestDto;
-import com.lshzzz.mato.model.Map.dto.MapResponseDto;
+import com.lshzzz.mato.model.map.Map;
+import com.lshzzz.mato.model.map.dto.MapRequestDto;
+import com.lshzzz.mato.model.map.dto.MapResponseDto;
 import com.lshzzz.mato.repository.MapRepository;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MapService {
 	private final MapRepository mapRepository;
 
-	public MapResponseDto createMap(MapRequestDto dto) {
-		if (mapRepository.existsByName(dto.name())) {
-			throw new IllegalArgumentException("이미 존재하는 맵 이름입니다.");
-		}
-
-		Map map = new Map();
-		map.setName(dto.name());
-		map.setDescription(dto.description());
-		map.setIsPublic(dto.isPublic());
+	// 맵 생성
+	@Transactional
+	public MapResponseDto createMap(MapRequestDto requestDto, Long userId) {
+		Map map = Map.builder()
+			.userId(userId)
+			.name(requestDto.name())
+			.description(requestDto.description())
+			.isPublic(requestDto.isPublic())
+			.build();
 
 		Map savedMap = mapRepository.save(map);
-		return new MapResponseDto(
-			savedMap.getId(),
-			savedMap.getName(),
-			savedMap.getDescription(),
-			savedMap.getIsPublic(),
-			savedMap.getCreatedAt()
-		);
+		return new MapResponseDto(savedMap);
 	}
 
-	public List<MapResponseDto> getAllMaps() {
-		return mapRepository.findAll().stream()
-			.map(map -> new MapResponseDto(
-				map.getId(), map.getName(), map.getDescription(),
-				map.getIsPublic(), map.getCreatedAt()
-			))
-			.toList();
-	}
-
+	// 특정 맵 조회
+	@Transactional(readOnly = true)
 	public MapResponseDto getMapById(Long id) {
 		Map map = mapRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("맵을 찾을 수 없습니다."));
-
-		return new MapResponseDto(
-			map.getId(), map.getName(), map.getDescription(),
-			map.getIsPublic(), map.getCreatedAt()
-		);
+			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 맵이 존재하지 않습니다."));
+		return new MapResponseDto(map);
 	}
 
-	public MapResponseDto updateMap(Long id, MapRequestDto dto) {
+	// 공개된 맵 목록 조회
+	@Transactional(readOnly = true)
+	public List<MapResponseDto> getPublicMaps() {
+		List<Map> maps = mapRepository.findByIsPublicTrue();
+		return maps.stream().map(MapResponseDto::new).toList();
+	}
+
+	// 맵 정보 수정
+	@Transactional
+	public MapResponseDto updateMap(Long id, MapRequestDto requestDto, Long userId) {
 		Map map = mapRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("맵을 찾을 수 없습니다."));
+			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 맵이 존재하지 않습니다."));
 
-		map.setName(dto.name());
-		map.setDescription(dto.description());
-		map.setIsPublic(dto.isPublic());
-
-		Map updatedMap = mapRepository.save(map);
-		return new MapResponseDto(
-			updatedMap.getId(), updatedMap.getName(), updatedMap.getDescription(),
-			updatedMap.getIsPublic(), updatedMap.getCreatedAt()
-		);
-	}
-
-	public void deleteMap(Long id) {
-		if (!mapRepository.existsById(id)) {
-			throw new IllegalArgumentException("삭제할 맵을 찾을 수 없습니다.");
+		if (!map.getUserId().equals(userId)) {
+			throw new IllegalArgumentException("맵 수정 권한이 없습니다.");
 		}
-		mapRepository.deleteById(id);
+
+		map.update(requestDto.name(), requestDto.description(), requestDto.isPublic());
+		return new MapResponseDto(map);
 	}
 
+	// 맵 삭제
+	@Transactional
+	public void deleteMap(Long id, Long userId) {
+		Map map = mapRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 맵이 존재하지 않습니다."));
+
+		if (!map.getUserId().equals(userId)) {
+			throw new IllegalArgumentException("맵 삭제 권한이 없습니다.");
+		}
+
+		mapRepository.delete(map);
+	}
 }
