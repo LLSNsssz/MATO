@@ -18,6 +18,11 @@ public class MapService {
 	// 맵 생성
 	@Transactional
 	public MapResponseDto createMap(MapRequestDto requestDto) {
+
+		if (mapRepository.existsByName(requestDto.name().trim())) {
+			throw new IllegalArgumentException("이미 존재하는 맵 이름입니다.");
+		}
+
 		Map map = Map.builder()
 			.userId(requestDto.userId())
 			.name(requestDto.name())
