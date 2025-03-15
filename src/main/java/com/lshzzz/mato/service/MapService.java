@@ -19,10 +19,6 @@ public class MapService {
 	@Transactional
 	public MapResponseDto createMap(MapRequestDto requestDto) {
 
-		if (mapRepository.existsByName(requestDto.name().trim())) {
-			throw new IllegalArgumentException("이미 존재하는 맵 이름입니다.");
-		}
-
 		Map map = Map.builder()
 			.userId(requestDto.userId())
 			.name(requestDto.name())
@@ -74,5 +70,16 @@ public class MapService {
 		}
 
 		mapRepository.delete(map);
+	}
+
+	public boolean checkDuplicateMap(String name) {
+		return mapRepository.existsByName(name);
+	}
+
+	// ✅ 중복 검사 시 예외 발생하도록 변경
+	public void validateDuplicateMap(String name) {
+		if (mapRepository.existsByName(name)) {
+			throw new IllegalArgumentException("이미 존재하는 맵 이름입니다: " + name);
+		}
 	}
 }
