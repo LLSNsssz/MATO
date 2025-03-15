@@ -3,37 +3,37 @@ package com.lshzzz.mato.controller;
 import com.lshzzz.mato.model.mapsongs.dto.MapSongRequestDto;
 import com.lshzzz.mato.model.mapsongs.dto.MapSongResponseDto;
 import com.lshzzz.mato.service.MapSongService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/mapsongs")
 @RequiredArgsConstructor
+@RequestMapping("/api/maps")
 public class MapSongController {
-
 	private final MapSongService mapSongService;
 
-	// 맵에 노래 추가
+	// 특정 맵에 노래 추가 (기존 노래 또는 새로운 노래 등록 가능)
 	@PostMapping("/{mapId}/songs")
-	public ResponseEntity<MapSongResponseDto> addSongToMap(
-		@PathVariable Long mapId,
-		@Valid @RequestBody MapSongRequestDto requestDto
-	) {
-		return ResponseEntity.ok(mapSongService.addSongToMap(mapId, requestDto));
+	public ResponseEntity<MapSongResponseDto> addSongToMap(@PathVariable Long mapId,
+		@RequestBody @Valid MapSongRequestDto requestDto) {
+		MapSongResponseDto added = mapSongService.addSongToMap(mapId, requestDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(added);
 	}
 
-	// 특정 맵의 노래 목록 조회
-	@GetMapping("/map/{mapId}")
-	public ResponseEntity<List<MapSongResponseDto>> getSongsByMapId(@PathVariable Long mapId) {
-		return ResponseEntity.ok(mapSongService.getSongsByMapId(mapId));
+	// 특정 맵에 연결된 모든 노래 조회
+	@GetMapping("/{mapId}/songs")
+	public ResponseEntity<List<MapSongResponseDto>> getSongsByMap(@PathVariable Long mapId) {
+		List<MapSongResponseDto> songs = mapSongService.getSongsByMapId(mapId);
+		return ResponseEntity.ok(songs);
 	}
 
-	// 맵에서 특정 노래 삭제
-	@DeleteMapping("/{mapSongId}")
+	// 특정 맵에서 노래 제거 (MapSong ID 기준으로 삭제)
+	@DeleteMapping("/songs/{mapSongId}")
 	public ResponseEntity<Void> removeSongFromMap(@PathVariable Long mapSongId) {
 		mapSongService.removeSongFromMap(mapSongId);
 		return ResponseEntity.noContent().build();

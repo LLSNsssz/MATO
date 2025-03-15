@@ -11,4 +11,6 @@ import com.lshzzz.mato.model.map.Map;
 public interface MapRepository extends JpaRepository<Map, Long> {
 	List<Map> findByIsPublicTrue(); // 공개 맵 목록 조회
 
+	boolean existsByName(String name);
+
 }

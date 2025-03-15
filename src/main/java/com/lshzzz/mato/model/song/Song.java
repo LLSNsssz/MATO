@@ -32,20 +32,6 @@ public class Song extends BaseEntity {
 	@Column(nullable = false)
 	private String youtubeUrl; // 오디오 파일 URL (유튜브 OR 직접 업로드)
 
-	// Map과 연결 (양방향 관계)
-	@OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<MapSong> mapSongs = new ArrayList<>();
-
-	// 생성 메서드
-	public static Song create(String title, String artist, String composer, String audioUrl) {
-		return Song.builder()
-			.title(title)
-			.artist(artist)
-			.composer(composer)
-			.youtubeUrl(audioUrl)
-			.build();
-	}
-
 	// 업데이트 메서드
 	public void update(String title, String artist, String composer, String audioUrl) {
 		this.title = title;
