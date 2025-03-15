@@ -31,11 +31,11 @@ public class MapSong extends BaseEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "map_id")
+	@JoinColumn(name = "map_id", nullable = false)
 	private Map map;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "song_id")
+	@JoinColumn(name = "song_id", nullable = false)
 	private Song song;
 
 	@Column(nullable = false)
@@ -47,12 +47,4 @@ public class MapSong extends BaseEntity {
 	@Column(nullable = false)
 	private Integer repeatCount; // 반복 횟수
 
-	// 연관관계 편의 메서드
-	public void setMaps(Map map) {
-		this.map = map;
-	}
-
-	public void setSongs(Song song) {
-		this.song = song;
-	}
 }

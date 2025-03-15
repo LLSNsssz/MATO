@@ -44,16 +44,6 @@ public class Map extends BaseEntity {
 	@Column(name = "map_status", nullable = false)
 	private Boolean isPublic;
 
-	// Map-Song 연결 (양방향 관계)
-	@OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<MapSong> mapSongs = new ArrayList<>();
-
-	// 편의 메서드 (노래 추가)
-	public void addMapSong(MapSong mapSong) {
-		mapSongs.add(mapSong);
-		mapSong.setMaps(this);
-	}
-
 	public void update(String name, String description, Boolean isPublic) {
 		this.name = name;
 		this.description = description;
